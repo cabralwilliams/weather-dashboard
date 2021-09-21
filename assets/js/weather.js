@@ -2,10 +2,24 @@
 //Retrieve weather search history from localStorage
 //Will be stored as lower case strings of city names
 var savedWeatherSearches = JSON.parse(localStorage.getItem("savedWeatherSearches")) || [];
-var mostRecentSearch = JSON.parse(localStorage.getItem("mostRecentSearch")) || { cityName: "houston", longitude: -95.3633, latitude: 29.7633 };
+var mostRecentSearch = savedWeatherSearches.length === 0 ? { cityName: "houston", longitude: -95.3633, latitude: 29.7633 } : savedWeatherSearches[0];
 
 var saveSearches = function() {
     localStorage.setItem("savedWeatherSearches",JSON.stringify(savedWeatherSearches));
+};
+
+var jumpToTheFront = function(inputArray,index) {
+    if(inputArray.length === 1) {
+        return inputArray;
+    }
+    var newNo1 = inputArray[index];
+    var output = [newNo1];
+    for(var i = 0; i < inputArray.length; i++) {
+        if(i !== index) {
+            output.push(inputArray[i]);
+        }
+    }
+    return output;
 };
 
 //API ID
@@ -97,7 +111,26 @@ var searchByCoordinates =  function(cityName,longitude,latitude) {
         });
 };
 
-//Search by city name
+var priorSearchButton = function(searchedCityOb,arrayIndex) {
+    var buttonEl = document.createElement("button");
+    buttonEl.className = "btn btn-primary mt-3";
+    buttonEl.setAttribute("data-index",arrayIndex);
+    buttonEl.textContent = titlize(searchedCityOb.cityName);
+    return buttonEl;
+};
+
+var loadPriorSearches = function() {
+    if(savedWeatherSearches.length === 0) {
+        return;
+    }
+    prevSearches.innerHTML = "";
+    for(var i = 0; i < savedWeatherSearches.length; i++) {
+        var nextButton = priorSearchButton(savedWeatherSearches[i],i);
+        prevSearches.appendChild(nextButton);
+    }
+};
+
+//Search by city name - obsolete
 var weatherSearchCity = function(cityString) {
     var formattedString = cityString.replace(/ /, "+").toLowerCase();
     var apiUrl = "https://api.openweathermap.org/data/2.5/weather?q=" + formattedString + "&APPID=b30096dc99b5b0d5c4edfccb15cd2965";
@@ -115,7 +148,7 @@ var weatherSearchCity = function(cityString) {
         });
 };
 
-//Search by longitude and latitude
+//Search by longitude and latitude - obsolete
 var weatherSearchCoordinates = function(longitude,latitude) {
     var apiUrl = `https://api.openweathermap.org/data/2.5/onecall?lat=${latitude}&lon=${longitude}&exclude=current,minutely,hourly,alerts&appid=${apiId}`;
     fetch(apiUrl)
@@ -143,6 +176,7 @@ var weatherSearchCoordinates = function(longitude,latitude) {
         });
 };
 
+//Obsolete
 var callBoth = function(cityName,longitude,latitude) {
     weatherSearchCity(cityName);
     weatherSearchCoordinates(longitude,latitude);
@@ -162,6 +196,9 @@ var searchForCity = function(cityName) {
     if(cityAlreadySearched) {
         longitude = savedWeatherSearches[cityIndex].longitude;
         latitude = savedWeatherSearches[cityIndex].latitude;
+        savedWeatherSearches = jumpToTheFront(savedWeatherSearches,cityIndex);
+        saveSearches();
+        loadPriorSearches();
         searchByCoordinates(cityName,longitude,latitude);
     } else {
         var formattedString = cityName.replace(/ /, "+").toLowerCase();
@@ -182,7 +219,9 @@ var searchForCity = function(cityName) {
                                 latitude: latitude
                             };
                             savedWeatherSearches.push(searchObject);
+                            savedWeatherSearches = jumpToTheFront(savedWeatherSearches,savedWeatherSearches.length - 1);
                             saveSearches();
+                            loadPriorSearches();
                             searchByCoordinates(cityName,longitude,latitude);
                         });
                 }
@@ -190,7 +229,17 @@ var searchForCity = function(cityName) {
     }
 };
 
+var loadCityWeather = function(event) {
+    event.preventDefault();
+    //var arrayIndex = event.target.getAttribute("data-index");
+    var cityName = event.target.textContent.trim().toLowerCase();
+    searchForCity(cityName);
+}
+
+prevSearches.addEventListener("click", loadCityWeather);
+
 //Used to populate
 var defaultSearch = ["Houston",-95.3633,29.7633];
 //callBoth(...defaultSearch);
-searchForCity("New York");
+loadPriorSearches();
+searchForCity("Denver");
