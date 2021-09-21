@@ -27,6 +27,7 @@ var apiId = "b30096dc99b5b0d5c4edfccb15cd2965";
 
 //Page elements
 var citySearchEl = document.querySelector("#city-search");
+var cityFormEl = document.querySelector("#city-form");
 var prevSearches = document.querySelector("#previous-searches");
 var currentCityEl1 = document.querySelector("#current-city-today");
 var currentCityEl2 = document.querySelector("#current-city-five-day");
@@ -47,7 +48,7 @@ var getTodaysWeather = function(cityName,dayData) {
     var cityAndDay = titlize(cityName) + " (" + moment(dayData.dt*1000).format("MM/D/YYYY") + ")";
     cityHeader.textContent = cityAndDay;
     var tempDiv = document.createElement("div");
-    var maxTemp = (dayData.temp.max - 273.15)*1.8 + 32;
+    var maxTemp = (dayData.temp - 273.15)*1.8 + 32;
     tempDiv.innerHTML = "Temp: " + maxTemp.toFixed(2) + " &deg;F";
     var windDiv = document.createElement("div");
     windDiv.textContent = "Wind: " + dayData.wind_speed + " MPH";
@@ -92,7 +93,7 @@ var getDailyForecast = function(dayData) {
 };
 
 var searchByCoordinates =  function(cityName,longitude,latitude) {
-    var apiUrl = `https://api.openweathermap.org/data/2.5/onecall?lat=${latitude}&lon=${longitude}&exclude=current,minutely,hourly,alerts&appid=${apiId}`;
+    var apiUrl = `https://api.openweathermap.org/data/2.5/onecall?lat=${latitude}&lon=${longitude}&exclude=minutely,hourly,alerts&appid=${apiId}`;
     fetch(apiUrl)
         .then(function(response) {
             if(response.ok) {
@@ -105,7 +106,7 @@ var searchByCoordinates =  function(cityName,longitude,latitude) {
                             currentCityEl2.appendChild(nextElement);
                         }
                         currentCityEl1.innerHTML = "";
-                        getTodaysWeather(cityName,data.daily[0]);
+                        getTodaysWeather(cityName,data.current);
                     });
             }
         });
@@ -150,7 +151,7 @@ var weatherSearchCity = function(cityString) {
 
 //Search by longitude and latitude - obsolete
 var weatherSearchCoordinates = function(longitude,latitude) {
-    var apiUrl = `https://api.openweathermap.org/data/2.5/onecall?lat=${latitude}&lon=${longitude}&exclude=current,minutely,hourly,alerts&appid=${apiId}`;
+    var apiUrl = `https://api.openweathermap.org/data/2.5/onecall?lat=${latitude}&lon=${longitude}&exclude=minutely,hourly,alerts&appid=${apiId}`;
     fetch(apiUrl)
         .then(function(response) {
             if(response.ok) {
@@ -171,6 +172,8 @@ var weatherSearchCoordinates = function(longitude,latitude) {
                         currentCityEl2.innerHTML = "";
                         //currentCityEl2.textContent = JSON.stringify(data.daily);
                         currentCityEl2.appendChild(results);
+                        currentCityEl1.innerHTML = "";
+                        currentCityEl1.innerHTML = JSON.stringify(data.current);
                     });
             }
         });
@@ -178,7 +181,7 @@ var weatherSearchCoordinates = function(longitude,latitude) {
 
 //Obsolete
 var callBoth = function(cityName,longitude,latitude) {
-    weatherSearchCity(cityName);
+    //weatherSearchCity(cityName);
     weatherSearchCoordinates(longitude,latitude);
 };
 
@@ -224,6 +227,15 @@ var searchForCity = function(cityName) {
                             loadPriorSearches();
                             searchByCoordinates(cityName,longitude,latitude);
                         });
+                } else {
+                    if(response.status === 404) {
+                        var alertMessage = "The city that you input, " + titlize(cityName) + ", did not return any results.  Please check the spelling or try another search.";
+                        alert(alertMessage);
+                    } else {
+                        alert("An unexpected error happened during your search.  Please try again.");
+                    }
+                    document.querySelector("#city-input").value = "";
+                    document.querySelector("#city-input").placeholder = "Enter a City";
                 }
             });
     }
@@ -234,12 +246,25 @@ var loadCityWeather = function(event) {
     //var arrayIndex = event.target.getAttribute("data-index");
     var cityName = event.target.textContent.trim().toLowerCase();
     searchForCity(cityName);
-}
+};
+
+var searchNewCity = function(event) {
+    event.preventDefault();
+    var cityName = document.querySelector("#city-input").value.trim().toLowerCase();
+    if(cityName === "") {
+        alert("Please enter a city name to search.");
+        return;
+    }
+    searchForCity(cityName);
+    document.querySelector("#city-input").value = "";
+    document.querySelector("#city-input").placeholder = "Enter a City";
+};
 
 prevSearches.addEventListener("click", loadCityWeather);
+cityFormEl.addEventListener("submit", searchNewCity);
 
 //Used to populate
 var defaultSearch = ["Houston",-95.3633,29.7633];
 //callBoth(...defaultSearch);
 loadPriorSearches();
-searchForCity("Denver");
+searchForCity(mostRecentSearch.cityName);
