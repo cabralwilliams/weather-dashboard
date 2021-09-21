@@ -16,3 +16,22 @@ body {
     margin: 0 auto;
 }
 
+.bgLow {
+    background-color: green;
+}
+
+.bgModerate {
+    background-color: yellow;
+}
+
+.bgHigh {
+    background-color: orange;
+}
+
+.bgVeryHigh {
+    background-color: red;
+}
+
+.bgExtreme {
+    background-color: purple;
+}
