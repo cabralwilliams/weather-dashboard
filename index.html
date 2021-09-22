@@ -9,11 +9,11 @@
         <link rel="stylesheet" href="./assets/css/style.css" />
     </head>
     <body>
-        <header class="row flex text-center container" id="doc-header">
-            <h1>Weather Dashboard</h1>
-        </header>
-        <main>
-            <div class="container">
+        <div class="container-fluid">
+            <header class="row flex text-center mb-3" id="doc-header">
+                <h1>Weather Dashboard</h1>
+            </header>
+            <main>
                 <div class="row col-12">
                     <div class="col-3 flex-column">
                         <div class="card col-12" id="city-search">
@@ -30,15 +30,15 @@
                         </div>
                     </div>
                     <div class="col-9 flex-column">
-                        <div class="row col-12" id="current-city-today"></div>
+                        <div class="row col-12 mb-4" id="current-city-today"></div>
                         <div class="row col-12" id="five-day-header">
                             <h3>5-Day Forecast:</h3>
                         </div>
-                        <div class="row col-12 flex" id="current-city-five-day"></div>
+                        <div class="row col-12 flex d-flex justify-content-between" id="current-city-five-day"></div>
                     </div>
                 </div>
-            </div>
-        </main>
+            </main>
+        </div>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
         <script src="./assets/js/weather.js"></script>
     </body>

@@ -16,6 +16,31 @@ body {
     margin: 0 auto;
 }
 
+#doc-header {
+    background: linear-gradient(90deg, var(--color2) 40%, var(--color4));
+    padding-top: 12px;
+    padding-bottom: 12px;
+}
+
+#current-city-today {
+    border: 2px #808080 solid;
+    border-radius: 5px;
+    box-shadow: 0 0 3px black;
+}
+
+.forecast5 {
+    background-color: var(--color4);
+    color: var(--color3);
+    padding: 10px;
+    box-shadow: 0 0 5px black;
+}
+
+.bgLow, .bgModerate, .bgHigh, .bgVeryHigh, .bgExtreme {
+    padding: 4px;
+    border-radius: 10%;
+    color: #b0b0b0;
+}
+
 .bgLow {
     background-color: green;
 }
@@ -34,4 +59,28 @@ body {
 
 .bgExtreme {
     background-color: purple;
+}
+
+.fontSize18 {
+    font-size: 18px;
+}
+
+.fontSize20 {
+    font-size: 20px;
+}
+
+.fontSize22 {
+    font-size: 22px;
+}
+
+.fontSize24 {
+    font-size: 24px;
+}
+
+.fontSize26 {
+    font-size: 26px;
+}
+
+.fontSize28 {
+    font-size: 28px;
 }

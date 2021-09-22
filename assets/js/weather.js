@@ -22,6 +22,10 @@ var jumpToTheFront = function(inputArray,index) {
     return output;
 };
 
+var addClassToElement = function(element,classToAdd) {
+    element.classList.add(classToAdd);
+};
+
 //API ID
 var apiId = "b30096dc99b5b0d5c4edfccb15cd2965";
 
@@ -53,22 +57,30 @@ var getTodaysWeather = function(cityName,dayData) {
     }
     cityHeader.innerHTML = cityAndDay;
     var tempDiv = document.createElement("div");
+    addClassToElement(tempDiv,"mb-4");
+    addClassToElement(tempDiv,"fontSize20");
     var maxTemp = (dayData.temp - 273.15)*1.8 + 32;
     tempDiv.innerHTML = "Temp: " + maxTemp.toFixed(2) + " &deg;F";
     var windDiv = document.createElement("div");
+    addClassToElement(windDiv,"mb-4");
+    addClassToElement(windDiv,"fontSize20");
     windDiv.textContent = "Wind: " + dayData.wind_speed + " MPH";
     var humidityDiv = document.createElement("div");
+    addClassToElement(humidityDiv,"mb-4");
+    addClassToElement(humidityDiv,"fontSize20");
     humidityDiv.textContent = "Humidity: " + dayData.humidity + "%";
     var uvDiv = document.createElement("div");
+    addClassToElement(uvDiv,"mb-4");
+    addClassToElement(uvDiv,"fontSize20");
     var uvSpan = "<span class='";
     var uvi = dayData.uvi;
-    if(uvi <= 2.5) {
+    if(uvi < 3) {
         uvSpan += "bgLow";
-    } else if(uvi <= 5.5) {
+    } else if(uvi < 6) {
         uvSpan += "bgModerate";
-    } else if(uvi <= 7.5) {
+    } else if(uvi < 8) {
         uvSpan += "bgHigh";
-    } else if(uvi <= 10.5) {
+    } else if(uvi < 11) {
         uvSpan += "bgVeryHigh";
     } else {
         uvSpan += "bgExtreme";
@@ -82,22 +94,29 @@ var getTodaysWeather = function(cityName,dayData) {
 
 var getDailyForecast = function(dayData,cityName) {
     var dayDiv = document.createElement("div");
-    dayDiv.className = "flex-column col";
+    dayDiv.className = "flex-column col-2 forecast5";
     var dayHeader = document.createElement("h4");
+    addClassToElement(dayHeader,"mb-3");
     dayHeader.textContent = moment(dayData.dt*1000).format("MM/D/YYYY");
     //Some sort of weather symbol?
     var conditionImg = document.createElement("img");
+    addClassToElement(conditionImg,"mb-3");
     if(cityName.toLowerCase() === "philadelphia") {
         conditionImg.src = "http://openweathermap.org/img/wn/01d.png";
     } else {
         conditionImg.src = "http://openweathermap.org/img/wn/" + dayData.weather[0].icon + ".png";
     }
     var tempDiv = document.createElement("div");
+    addClassToElement(tempDiv,"mb-2");
+    addClassToElement(tempDiv,"fontSize18");
     var maxTemp = (dayData.temp.max - 273.15)*1.8 + 32;
     tempDiv.innerHTML = "Temp: " + maxTemp.toFixed(2) + " &deg;F";
     var windDiv = document.createElement("div");
+    addClassToElement(windDiv,"mb-2");
+    addClassToElement(windDiv,"fontSize18");
     windDiv.textContent = "Wind: " + dayData.wind_speed + " MPH";
     var humidityDiv = document.createElement("div");
+    addClassToElement(humidityDiv,"fontSize18");
     humidityDiv.textContent = "Humidity: " + dayData.humidity + "%";
     dayDiv.append(dayHeader,conditionImg,tempDiv,windDiv,humidityDiv);
     return dayDiv;
@@ -125,7 +144,7 @@ var searchByCoordinates =  function(cityName,longitude,latitude) {
 
 var priorSearchButton = function(searchedCityOb,arrayIndex) {
     var buttonEl = document.createElement("button");
-    buttonEl.className = "btn btn-primary mt-3";
+    buttonEl.className = "btn btn-secondary mt-2";
     buttonEl.setAttribute("data-index",arrayIndex);
     buttonEl.textContent = titlize(searchedCityOb.cityName);
     return buttonEl;
