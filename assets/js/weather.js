@@ -46,7 +46,12 @@ var getTodaysWeather = function(cityName,dayData) {
     var todaysWeatherDiv = document.createElement("div");
     var cityHeader = document.createElement("h2");
     var cityAndDay = titlize(cityName) + " (" + moment(dayData.dt*1000).format("MM/D/YYYY") + ")";
-    cityHeader.textContent = cityAndDay;
+    if(cityName === "philadelphia") {
+        cityAndDay += " <img src='http://openweathermap.org/img/wn/01d.png' />";
+    } else {
+        cityAndDay += " <img src='http://openweathermap.org/img/wn/" + dayData.weather[0].icon + ".png' />";
+    }
+    cityHeader.innerHTML = cityAndDay;
     var tempDiv = document.createElement("div");
     var maxTemp = (dayData.temp - 273.15)*1.8 + 32;
     tempDiv.innerHTML = "Temp: " + maxTemp.toFixed(2) + " &deg;F";
@@ -75,12 +80,18 @@ var getTodaysWeather = function(cityName,dayData) {
     currentCityEl1.appendChild(todaysWeatherDiv);
 };
 
-var getDailyForecast = function(dayData) {
+var getDailyForecast = function(dayData,cityName) {
     var dayDiv = document.createElement("div");
     dayDiv.className = "flex-column col";
     var dayHeader = document.createElement("h4");
     dayHeader.textContent = moment(dayData.dt*1000).format("MM/D/YYYY");
     //Some sort of weather symbol?
+    var conditionImg = document.createElement("img");
+    if(cityName.toLowerCase() === "philadelphia") {
+        conditionImg.src = "http://openweathermap.org/img/wn/01d.png";
+    } else {
+        conditionImg.src = "http://openweathermap.org/img/wn/" + dayData.weather[0].icon + ".png";
+    }
     var tempDiv = document.createElement("div");
     var maxTemp = (dayData.temp.max - 273.15)*1.8 + 32;
     tempDiv.innerHTML = "Temp: " + maxTemp.toFixed(2) + " &deg;F";
@@ -88,7 +99,7 @@ var getDailyForecast = function(dayData) {
     windDiv.textContent = "Wind: " + dayData.wind_speed + " MPH";
     var humidityDiv = document.createElement("div");
     humidityDiv.textContent = "Humidity: " + dayData.humidity + "%";
-    dayDiv.append(dayHeader,tempDiv,windDiv,humidityDiv);
+    dayDiv.append(dayHeader,conditionImg,tempDiv,windDiv,humidityDiv);
     return dayDiv;
 };
 
@@ -102,7 +113,7 @@ var searchByCoordinates =  function(cityName,longitude,latitude) {
                         console.log(data);
                         currentCityEl2.innerHTML = "";
                         for(var i = 1; i < 6; i++) {
-                            var nextElement = getDailyForecast(data.daily[i]);
+                            var nextElement = getDailyForecast(data.daily[i],cityName);
                             currentCityEl2.appendChild(nextElement);
                         }
                         currentCityEl1.innerHTML = "";
