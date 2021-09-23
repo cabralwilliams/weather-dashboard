@@ -84,3 +84,9 @@ body {
 .fontSize28 {
     font-size: 28px;
 }
+
+#clearSearchHistory {
+    background-color: var(--color4);
+    color: var(--color3);
+    margin-top: 20px;
+}

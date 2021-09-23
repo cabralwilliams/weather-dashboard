@@ -2,7 +2,38 @@
 //Retrieve weather search history from localStorage
 //Will be stored as lower case strings of city names
 var savedWeatherSearches = JSON.parse(localStorage.getItem("savedWeatherSearches")) || [];
-var mostRecentSearch = savedWeatherSearches.length === 0 ? { cityName: "houston", longitude: -95.3633, latitude: 29.7633 } : savedWeatherSearches[0];
+var placeholderCities = [
+    { cityName: "houston", longitude: -95.3633, latitude: 29.7633 },
+    { cityName: "san diego", longitude: -117.1753, latitude: 32.7153 },
+    {
+        "cityName": "boston",
+        "longitude": -71.0598,
+        "latitude": 42.3584
+    },
+    {
+        "cityName": "philadelphia",
+        "longitude": -75.1638,
+        "latitude": 39.9523
+    },
+    {
+        "cityName": "new york city",
+        "longitude": -74.006,
+        "latitude": 40.7143
+    },
+    {
+        "cityName": "denver",
+        "longitude": -104.9847,
+        "latitude": 39.7392
+    },
+    {
+        "cityName": "san francisco",
+        "longitude": -122.4194,
+        "latitude": 37.7749
+    }
+];
+var mostRecentSearch = savedWeatherSearches.length === 0 ? placeholderCities[Math.floor(Math.random()*placeholderCities.length)] : savedWeatherSearches[0];
+
+
 
 var saveSearches = function() {
     localStorage.setItem("savedWeatherSearches",JSON.stringify(savedWeatherSearches));
@@ -35,6 +66,7 @@ var cityFormEl = document.querySelector("#city-form");
 var prevSearches = document.querySelector("#previous-searches");
 var currentCityEl1 = document.querySelector("#current-city-today");
 var currentCityEl2 = document.querySelector("#current-city-five-day");
+var clearSearchBtn = document.querySelector("#clearSearchHistory");
 
 //Captialize first letters of words
 var titlize = function(inputString) {
@@ -215,7 +247,7 @@ var callBoth = function(cityName,longitude,latitude) {
     weatherSearchCoordinates(longitude,latitude);
 };
 
-var searchForCity = function(cityName) {
+var searchForCity = function(cityName,saveSearch = true) {
     var cityAlreadySearched = false;
     var cityIndex = -1;
     for(var i = 0; i < savedWeatherSearches.length; i++) {
@@ -230,8 +262,10 @@ var searchForCity = function(cityName) {
         longitude = savedWeatherSearches[cityIndex].longitude;
         latitude = savedWeatherSearches[cityIndex].latitude;
         savedWeatherSearches = jumpToTheFront(savedWeatherSearches,cityIndex);
-        saveSearches();
-        loadPriorSearches();
+        if(saveSearch) {
+            saveSearches();
+            loadPriorSearches();
+        }
         searchByCoordinates(cityName,longitude,latitude);
     } else {
         var formattedString = cityName.replace(/ /, "+").toLowerCase();
@@ -251,10 +285,12 @@ var searchForCity = function(cityName) {
                                 longitude: longitude,
                                 latitude: latitude
                             };
-                            savedWeatherSearches.push(searchObject);
-                            savedWeatherSearches = jumpToTheFront(savedWeatherSearches,savedWeatherSearches.length - 1);
-                            saveSearches();
-                            loadPriorSearches();
+                            if(saveSearch) {
+                                savedWeatherSearches.push(searchObject);
+                                savedWeatherSearches = jumpToTheFront(savedWeatherSearches,savedWeatherSearches.length - 1);
+                                saveSearches();
+                                loadPriorSearches();
+                            }
                             searchByCoordinates(cityName,longitude,latitude);
                         });
                 } else {
@@ -297,4 +333,15 @@ cityFormEl.addEventListener("submit", searchNewCity);
 var defaultSearch = ["Houston",-95.3633,29.7633];
 //callBoth(...defaultSearch);
 loadPriorSearches();
-searchForCity(mostRecentSearch.cityName);
+var noSearches = savedWeatherSearches.length === 0 ? true : false;
+searchForCity(mostRecentSearch.cityName,!noSearches);
+
+clearSearchBtn.addEventListener("click", function() {
+    savedWeatherSearches = [];
+    noSearches = true;
+    prevSearches.innerHTML = "";
+    localStorage.removeItem("savedWeatherSearches");
+    mostRecentSearch = placeholderCities[Math.floor(Math.random()*placeholderCities.length)];
+    loadPriorSearches();
+    searchForCity(mostRecentSearch.cityName,!noSearches);
+});
