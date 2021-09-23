@@ -5,9 +5,44 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Weather Dashboard</title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
         <link rel="stylesheet" href="./assets/css/style.css" />
     </head>
     <body>
+        <div class="container-fluid">
+            <header class="row flex text-center mb-3" id="doc-header">
+                <h1>Weather Dashboard</h1>
+            </header>
+            <main>
+                <div class="row col-12">
+                    <div class="col-3 flex-column">
+                        <div class="card col-12" id="city-search">
+                            <div class="card-body">
+                                <form class="form-group" id="city-form">
+                                    <label for="city-input" id="city-label" class="card-title"><h3>Search for a City:</h3></label>
+                                    <input type="text" class="form-control" name="city-input" id="city-input" placeholder="Enter a City" />
+                                    <button type="submit" class="btn btn-primary form-control">Search</button>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="col-12 d-flex flex-column" id="previous-searches">
+
+                        </div>
+                    </div>
+                    <div class="col-9 flex-column">
+                        <div class="row col-12 mb-4" id="current-city-today"></div>
+                        <div class="row col-12" id="five-day-header">
+                            <h3>5-Day Forecast:</h3>
+                        </div>
+                        <div class="row col-12 flex d-flex justify-content-between" id="current-city-five-day"></div>
+                        <div class="row col-4">
+                            <button class="btn btn-primary" id="clearSearchHistory">Clear Search History</button>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
         <script src="./assets/js/weather.js"></script>
     </body>
 </html>
